@@ -1,0 +1,11 @@
+<resources>
+    <!-- Content description -->
+    <string name="button_desc">Add button</string>
+
+
+    <string name="app_name">Just Tasks</string>
+
+    <!-- Menu item text -->
+    <string name="menu_item_delete">Delete</string>
+    <string name="menu_item_select_all">Select all</string>
+</resources>
