@@ -15,7 +15,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.recyclerview.selection.ItemDetailsLookup;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.justnik.justtasks.R;
@@ -196,9 +195,5 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             ivChecked = itemView.findViewById(R.id.ivChecked);
         }
 
-
-        public ItemDetailsLookup.ItemDetails<Long> getItemDetails(){
-            return new TaskItemDetail(getAdapterPosition(),taskList.get(getAdapterPosition()));
-        }
     }
 }
