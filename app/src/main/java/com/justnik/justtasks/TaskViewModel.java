@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.justnik.justtasks.taskdb.Task;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TaskViewModel extends AndroidViewModel {
@@ -16,6 +17,7 @@ public class TaskViewModel extends AndroidViewModel {
     private TaskRepository taskRepository;
     private LiveData<List<Task>> taskList;
     private MutableLiveData<Integer> selectedCount;
+    private ArrayList<Integer> selectedItemsPosition;
 
 
     public MutableLiveData<Integer> getSelectedCount() {
@@ -32,6 +34,7 @@ public class TaskViewModel extends AndroidViewModel {
         taskList = taskRepository.getTasks();
         selectedCount = new MutableLiveData<>();
         selectedCount.setValue(0);
+        selectedItemsPosition = new ArrayList<Integer>();
     }
 
     public LiveData<List<Task>> getTaskList() {
@@ -50,5 +53,7 @@ public class TaskViewModel extends AndroidViewModel {
         taskRepository.delete(tasks);
     }
 
-
+    public ArrayList<Integer> getSelectedItemsPosition() {
+        return selectedItemsPosition;
+    }
 }

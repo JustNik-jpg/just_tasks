@@ -3,6 +3,7 @@ package com.justnik.justtasks.view.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,6 +18,7 @@ import androidx.cardview.widget.CardView;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.justnik.justtasks.R;
 import com.justnik.justtasks.TaskViewModel;
 import com.justnik.justtasks.taskdb.Task;
@@ -31,21 +33,19 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private List<Task> taskList;
     private final Context context;
     private boolean isEnable = false;
-    private ArrayList<Task> selectedTasks;
+    private List<Integer> selectedItemsPosition;
     private final TaskViewModel viewModel;
     private ActionMode.Callback selectionCallback;
 
     private final String TAG_VIEW = "VIEW";
     private final String TAG_SELECT = "SELECT";
 
-
     public TaskAdapter(Context context, TaskViewModel viewModel) {
 
         this.context = context;
         this.viewModel = viewModel;
         taskInflater = LayoutInflater.from(context);
-        selectedTasks = new ArrayList<>();
-        setHasStableIds(true);
+        selectedItemsPosition = viewModel.getSelectedItemsPosition();
     }
 
     @NonNull
@@ -93,12 +93,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             //Long click listener for a view
             //Implements multiple selection
             holder.cardView.setOnLongClickListener(v -> {
-
                 if (!isEnable) {
                     Log.d(TAG_SELECT, "LongClick pressed");
                     selectionCallback = new SelectionCallback();
                     holder.cardView.startActionMode(selectionCallback);
                 }
+
                 if (selectionCallback != null) {
                     toggleSelection(holder);
                 }
@@ -107,25 +107,30 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             });
 
 
+            //Selection handling
+            if (selectedItemsPosition.contains(position)){
+                holder.ivChecked.setVisibility(View.VISIBLE);
+                holder.cardView.setBackgroundColor(context.getResources().getColor(R.color.main_purple_light));
+            } else {
+                holder.ivChecked.setVisibility(View.GONE);
+                holder.cardView.setBackgroundColor(context.getResources().getColor(R.color.white, null));
+            }
+
+
         }
 
     }
 
-    //Item selection handling
-    private void toggleSelection(TaskViewHolder viewHolder) {
-        Task t = taskList.get(viewHolder.getAdapterPosition());
-        Log.d(TAG_SELECT,"Toggling selection of a view of a task "+t.toString());
-        if (viewHolder.ivChecked.getVisibility() == View.GONE) {
-            viewHolder.ivChecked.setVisibility(View.VISIBLE);
-            viewHolder.cardView.setBackgroundColor(context.getResources().getColor(R.color.main_purple_light));
-            selectedTasks.add(t);
+    //Item selection toggle handling
+    private void toggleSelection(TaskViewHolder holder){
+        Integer position = holder.getAdapterPosition();
+        if (selectedItemsPosition.contains(position)){
+            selectedItemsPosition.remove(position);
         } else {
-            viewHolder.ivChecked.setVisibility(View.GONE);
-            viewHolder.cardView.setBackgroundColor(context.getResources().getColor(R.color.white, null));
-            selectedTasks.remove(t);
+            selectedItemsPosition.add(position);
         }
-        Log.d(TAG_SELECT, selectedTasks.toString());
-        viewModel.setSelectedCount(selectedTasks.size());
+        viewModel.setSelectedCount(selectedItemsPosition.size());
+        notifyItemChanged(position);
     }
 
     @Override
@@ -142,7 +147,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-
             mode.getMenuInflater().inflate(R.menu.main_menu, menu);
             return true;
         }
@@ -159,14 +163,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.miDelete:
-                    viewModel.delete(selectedTasks.toArray(new Task[0]));
-                    selectedTasks.clear();
+                    /*viewModel.delete(selectedTasks.toArray(new Task[0]));
+                    selectedTasks.clear();*/
                     //mode.finish();
                     //notifyDataSetChanged();
                     break;
                 case R.id.miSelectAll:
 
-                    //notifyDataSetChanged();
+
                     break;
             }
             return true;
@@ -175,7 +179,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             isEnable = false;
-            selectedTasks.clear();
+            selectedItemsPosition.clear();
             selectionCallback = null;
             notifyDataSetChanged();
         }
@@ -196,4 +200,5 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
 
     }
+
 }
