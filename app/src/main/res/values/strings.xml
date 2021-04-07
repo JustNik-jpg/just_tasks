@@ -11,4 +11,8 @@
     <string name="menu_item_add_notification">Add notification</string>
     <!-- Detail activity -->
     <string name="detail_complete_before">Complete before</string>
+
+    <!-- Notification channel -->
+    <string name="notification_channel">TaskChannel</string>
+    <string name="channel_id">job_service_just_task_notification_channel</string>
 </resources>

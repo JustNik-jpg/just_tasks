@@ -10,6 +10,8 @@ import android.widget.TextView;
 import com.justnik.justtasks.R;
 import com.justnik.justtasks.TaskViewModel;
 
+import java.util.Calendar;
+
 public class TaskDetailActivity extends AppCompatActivity {
     TaskViewModel viewModel;
 
@@ -41,7 +43,13 @@ public class TaskDetailActivity extends AppCompatActivity {
                 tvDetailedComplete.setVisibility(View.GONE);
                 tvDetailedTaskNotifDate.setVisibility(View.GONE);
             } else {
-                tvDetailedTaskNotifDate.setText(task.getNotificationDate().toString());
+                Calendar date = task.getNotificationDate();
+                tvDetailedTaskNotifDate.setText(String.format("%s/%s/%s %s:%s",
+                        date.get(Calendar.DAY_OF_MONTH),
+                        date.get(Calendar.MONTH)+1,
+                        date.get(Calendar.YEAR),
+                        date.get(Calendar.HOUR_OF_DAY),
+                        date.get(Calendar.MINUTE)));
             }
         });
 

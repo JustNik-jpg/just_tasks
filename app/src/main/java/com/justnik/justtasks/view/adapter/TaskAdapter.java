@@ -40,7 +40,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private final String TAG_SELECT = "SELECT";
 
     public TaskAdapter(Context context, TaskViewModel viewModel) {
-
         this.context = context;
         this.viewModel = viewModel;
         taskInflater = LayoutInflater.from(context);
