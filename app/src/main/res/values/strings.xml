@@ -8,4 +8,7 @@
     <!-- Menu item text -->
     <string name="menu_item_delete">Delete</string>
     <string name="menu_item_select_all">Select all</string>
+    <string name="menu_item_add_notification">Add notification</string>
+    <!-- Detail activity -->
+    <string name="detail_complete_before">Complete before</string>
 </resources>

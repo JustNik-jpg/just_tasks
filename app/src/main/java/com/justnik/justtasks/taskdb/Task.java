@@ -21,8 +21,8 @@ public class Task {
     private String taskName;
     @ColumnInfo(name = "task_text")
     private String taskText;
-    //@ColumnInfo(name = "creation_date")
-    //public Calendar creationDate;
+    @ColumnInfo(name = "notification_date")
+    private Calendar notificationDate;
     @ColumnInfo(name = "done")
     private boolean isDone;
 
@@ -67,16 +67,28 @@ public class Task {
         isDone = done;
     }
 
+    public Calendar getNotificationDate() {
+        return notificationDate;
+    }
+
+    public void setNotificationDate(Calendar notificationDate) {
+        this.notificationDate = notificationDate;
+    }
+
     @NonNull
     @Override
     public String toString() {
-        return "Task: " + taskName + ", body: no" +  ", ID: " + taskId;
+        return "Task: " + taskName + ", body: " + (taskText.length() > 10 ? taskText.substring(0, 9) : taskText)
+                + ", ID: " + taskId + (notificationDate == null ? "" : ", Notification date: "
+                + String.format("Date: %s %s, Time: %s:%s", notificationDate.get(Calendar.MONTH),
+                notificationDate.get(Calendar.DAY_OF_MONTH),notificationDate.get(Calendar.HOUR_OF_DAY),
+                notificationDate.get(Calendar.MINUTE)));
     }
 
     @Override
     public boolean equals(@Nullable Object obj) {
         if (obj instanceof Task) {
-            Task temp = (Task)obj;
+            Task temp = (Task) obj;
             return this.taskId == temp.taskId;
         }
         return false;

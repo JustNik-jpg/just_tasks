@@ -3,7 +3,6 @@ package com.justnik.justtasks.view.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,7 +17,6 @@ import androidx.cardview.widget.CardView;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.justnik.justtasks.R;
 import com.justnik.justtasks.TaskViewModel;
 import com.justnik.justtasks.taskdb.Task;
@@ -33,6 +31,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private List<Task> taskList;
     private final Context context;
     private boolean isEnable = false;
+    private boolean isSelectedAll = false;
     private List<Integer> selectedItemsPosition;
     private final TaskViewModel viewModel;
     private ActionMode.Callback selectionCallback;
@@ -129,7 +128,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         } else {
             selectedItemsPosition.add(position);
         }
-        viewModel.setSelectedCount(selectedItemsPosition.size());
+        updateSelectedSize();
         notifyItemChanged(position);
     }
 
@@ -163,14 +162,33 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.miDelete:
-                    /*viewModel.delete(selectedTasks.toArray(new Task[0]));
-                    selectedTasks.clear();*/
-                    //mode.finish();
-                    //notifyDataSetChanged();
+                    ArrayList<Task> temp = new ArrayList<>();
+
+                    for (int i: selectedItemsPosition) {
+                        temp.add(taskList.get(i));
+                    }
+                    viewModel.delete(temp.toArray(new Task[0]));
+                    selectedItemsPosition.clear();
+                    mode.finish();
+                    notifyDataSetChanged();
                     break;
                 case R.id.miSelectAll:
-
-
+                    if (isSelectedAll){
+                        selectedItemsPosition.clear();
+                        notifyDataSetChanged();
+                        isSelectedAll = false;
+                    } else {
+                        isSelectedAll = true;
+                        for (int i = 0; i < taskList.size(); i++) {
+                            if (selectedItemsPosition.contains(i)){
+                                continue;
+                            } else {
+                                selectedItemsPosition.add(i);
+                                notifyItemChanged(i);
+                            }
+                        }
+                    }
+                    updateSelectedSize();
                     break;
             }
             return true;
@@ -185,6 +203,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
     }
 
+    private void updateSelectedSize(){
+        viewModel.setSelectedCount(selectedItemsPosition.size());
+    }
+
     class TaskViewHolder extends RecyclerView.ViewHolder {
         private TextView taskTitle;
         private TextView taskBody;
@@ -193,8 +215,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
-            taskTitle = itemView.findViewById(R.id.itemTaskTitle);
-            taskBody = itemView.findViewById(R.id.itemTaskBody);
+            taskTitle = itemView.findViewById(R.id.tvItemTaskTitle);
+            taskBody = itemView.findViewById(R.id.tvItemTaskBody);
             cardView = itemView.findViewById(R.id.card);
             ivChecked = itemView.findViewById(R.id.ivChecked);
         }

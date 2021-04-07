@@ -18,7 +18,7 @@ public class DateConverter {
     }
 
     @TypeConverter
-    public static long toTimestamp(Calendar c) {
+    public static Long toTimestamp(Calendar c) {
         return c == null ? null : c.getTimeInMillis();
     }
 

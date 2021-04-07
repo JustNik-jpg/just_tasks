@@ -42,14 +42,14 @@
 
             <!-- Title, secondary and supporting text -->
             <TextView
-                android:id="@+id/itemTaskTitle"
+                android:id="@+id/tvItemTaskTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Title of task"
                 android:textAppearance="?attr/textAppearanceHeadline6" />
 
             <TextView
-                android:id="@+id/itemTaskBody"
+                android:id="@+id/tvItemTaskBody"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"

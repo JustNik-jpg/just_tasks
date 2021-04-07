@@ -4,17 +4,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import com.justnik.justtasks.R;
 import com.justnik.justtasks.TaskViewModel;
-import com.justnik.justtasks.taskdb.Task;
 
 public class TaskDetailActivity extends AppCompatActivity {
     TaskViewModel viewModel;
 
-    TextView detailedTaskTitle;
-    TextView detailedTaskBody;
+    TextView tvDetailedTaskTitle;
+    TextView tvDetailedTaskBody;
+    TextView tvDetailedComplete;
+    TextView tvDetailedTaskNotifDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,12 +26,23 @@ public class TaskDetailActivity extends AppCompatActivity {
         int id = getIntent().getIntExtra("Task_ID", -1);
 
         viewModel = new ViewModelProvider.AndroidViewModelFactory(this.getApplication()).create(TaskViewModel.class);
-        detailedTaskTitle = findViewById(R.id.detailedTaskTitle);
-        detailedTaskBody = findViewById(R.id.detailedTaskBody);
+        tvDetailedTaskTitle = findViewById(R.id.tvDetailedTaskTitle);
+        tvDetailedTaskBody = findViewById(R.id.tvDetailedTaskBody);
+        tvDetailedComplete = findViewById(R.id.tvDetailedComplete);
+        tvDetailedTaskNotifDate = findViewById(R.id.tvDetailedTaskNotifDate);
+
+
 
         viewModel.getTaskByID(id).observe(this,task -> {
-            detailedTaskTitle.setText(task.getTaskName());
-            detailedTaskBody.setText(task.getTaskText());
+            tvDetailedTaskTitle.setText(task.getTaskName());
+            tvDetailedTaskBody.setText(task.getTaskText());
+
+            if (task.getNotificationDate()==null){
+                tvDetailedComplete.setVisibility(View.GONE);
+                tvDetailedTaskNotifDate.setVisibility(View.GONE);
+            } else {
+                tvDetailedTaskNotifDate.setText(task.getNotificationDate().toString());
+            }
         });
 
 
