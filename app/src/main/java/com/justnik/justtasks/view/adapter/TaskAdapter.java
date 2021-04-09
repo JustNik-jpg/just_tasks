@@ -1,5 +1,6 @@
 package com.justnik.justtasks.view.adapter;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -14,11 +15,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.justnik.justtasks.R;
 import com.justnik.justtasks.TaskViewModel;
+import com.justnik.justtasks.notifications.NotificationScheduler;
 import com.justnik.justtasks.taskdb.Task;
 import com.justnik.justtasks.view.TaskDetailActivity;
 
@@ -30,8 +33,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private final LayoutInflater taskInflater;
     private List<Task> taskList;
     private final Context context;
-    private boolean isEnable = false;
-    private boolean isSelectedAll = false;
     private List<Integer> selectedItemsPosition;
     private final TaskViewModel viewModel;
     private ActionMode.Callback selectionCallback;
@@ -77,7 +78,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             //Click listener for a view
             holder.cardView.setOnClickListener(v -> {
 
-                if (isEnable) {
+                if (viewModel.isEnable()) {
                     toggleSelection(holder);
                 } else {
                     Intent i = new Intent(context, TaskDetailActivity.class);
@@ -91,7 +92,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             //Long click listener for a view
             //Implements multiple selection
             holder.cardView.setOnLongClickListener(v -> {
-                if (!isEnable) {
+                if (!viewModel.isEnable()) {
                     Log.d(TAG_SELECT, "LongClick pressed");
                     selectionCallback = new SelectionCallback();
                     holder.cardView.startActionMode(selectionCallback);
@@ -151,7 +152,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            isEnable = true;
+            viewModel.setEnable(true);
             viewModel.getSelectedCount().observe((LifecycleOwner) context, integer -> mode.setTitle(String.format(integer+" Selected")));
 
             return true;
@@ -164,7 +165,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                     ArrayList<Task> temp = new ArrayList<>();
 
                     for (int i: selectedItemsPosition) {
-                        temp.add(taskList.get(i));
+                        Task t = taskList.get(i);
+
+                        temp.add(t);
+                        if(t.getNotificationDate()!=null){
+                            Log.d("Notifications","Deleting task"+t.toString());
+                            NotificationScheduler notificationScheduler = new NotificationScheduler();
+                            notificationScheduler.cancelNotification(context.getApplicationContext(),t.getTaskName(),t.getTaskId());
+
+
+                        }
                     }
                     viewModel.delete(temp.toArray(new Task[0]));
                     selectedItemsPosition.clear();
@@ -172,12 +182,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                     notifyDataSetChanged();
                     break;
                 case R.id.miSelectAll:
-                    if (isSelectedAll){
+                    if (viewModel.isSelectedAll()){
                         selectedItemsPosition.clear();
                         notifyDataSetChanged();
-                        isSelectedAll = false;
+                        viewModel.setSelectedAll(false);
                     } else {
-                        isSelectedAll = true;
+                        viewModel.setSelectedAll(true);
                         for (int i = 0; i < taskList.size(); i++) {
                             if (selectedItemsPosition.contains(i)){
                                 continue;
@@ -195,7 +205,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            isEnable = false;
+            viewModel.setEnable(false);
             selectedItemsPosition.clear();
             selectionCallback = null;
             notifyDataSetChanged();

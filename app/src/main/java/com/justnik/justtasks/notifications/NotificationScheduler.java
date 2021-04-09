@@ -20,17 +20,30 @@ public class NotificationScheduler {
     Context context;
     private final String CHANNEL_ID = "just_task_channel";
 
-    public void scheduleNotification(Context context, long timeMillis,String title) {
+    public void scheduleNotification(Context context, long timeMillis,String title,int id) {
         this.context = context;
-        Log.d("TAG", "scheduling 22222222222222222222222222222222222222222");
+        Log.d("Notification", "Scheduling Notification "+title+" "+id);
         createNotificationChannel();
         Intent intent = new Intent(context, TaskNotificationPublisher.class);
         intent.putExtra("notification",createNotification(title));
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        intent.putExtra("ID",id);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, intent, 0);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, timeMillis + 6000, pendingIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, timeMillis, pendingIntent);
 
+    }
+
+    public void cancelNotification(Context context, String title, int id){
+        this.context = context;
+        Log.d("Canceling Notification",id+"");
+        Intent intent = new Intent(context, TaskNotificationPublisher.class);
+        intent.putExtra("notification",createNotification(title));
+        intent.putExtra("ID",id);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
+        pendingIntent.cancel();
     }
 
     private void createNotificationChannel() {

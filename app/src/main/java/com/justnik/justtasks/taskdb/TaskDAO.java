@@ -13,7 +13,7 @@ import java.util.List;
 public interface TaskDAO {
 
     @Insert
-    void insertAll(Task... tasks);
+    List<Long> insertAll(Task... tasks);
 
     @Delete
     void delete(Task... task);

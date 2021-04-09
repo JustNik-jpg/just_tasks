@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -19,6 +20,11 @@ import com.justnik.justtasks.taskdb.Task;
 import com.justnik.justtasks.view.datepicker.DateTimePicker;
 
 import java.util.Calendar;
+import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class TaskAddActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -26,7 +32,7 @@ public class TaskAddActivity extends AppCompatActivity implements View.OnClickLi
     private EditText etTaskBody;
     private Calendar calendar;
 
-    private final String TAG_ADD = "ADD_TASK";
+    private final String TAG_ADD = "Notification";
 
 
     @Override
@@ -40,6 +46,7 @@ public class TaskAddActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
+    @SuppressLint("CheckResult")
     @Override
     public void onClick(View v) {
 
@@ -51,11 +58,19 @@ public class TaskAddActivity extends AppCompatActivity implements View.OnClickLi
 
             if (calendar != null) {
                 task.setNotificationDate(calendar);
-                Log.d(TAG_ADD, task.toString());
-                NotificationScheduler notificationScheduler = new NotificationScheduler();
-                notificationScheduler.scheduleNotification(getApplicationContext(),calendar.getTimeInMillis(),task.getTaskName());
+
+
             }
-            viewModel.insertAll(task);
+            Observable<List<Long>> o = viewModel.insertAll(task);
+            o.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(longs -> {
+                if (calendar!=null){
+                    Log.d(TAG_ADD, "Added task"+longs.get(0)+"------"+task.toString());
+                    NotificationScheduler notificationScheduler = new NotificationScheduler();
+                    notificationScheduler.scheduleNotification(getApplicationContext(),calendar.getTimeInMillis(),task.getTaskName(), Math.toIntExact(longs.get(0)));
+                }
+            });
+
+
         }
 
 

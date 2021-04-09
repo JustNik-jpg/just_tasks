@@ -23,8 +23,14 @@ public class TaskNotificationPublisher extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         Notification notification = intent.getParcelableExtra("notification");
-        Log.d("TAG", "onReceive: "+notification);
-        notificationManager.notify(1, notification);
+        int id  = intent.getIntExtra("ID",-1);
+        Log.d("Notification", "Received notification with id: "+" "+id);
+
+        if (id == -1) {
+            Log.d("Notification", "Invalid id");
+        } else {
+            notificationManager.notify(1, notification);
+        }
     }
 
 

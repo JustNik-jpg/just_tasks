@@ -13,6 +13,9 @@ import com.justnik.justtasks.taskdb.TaskDB;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import io.reactivex.Observable;
+import io.reactivex.Single;
+
 public class TaskRepository {
 
     private TaskDAO taskDao;
@@ -27,9 +30,9 @@ public class TaskRepository {
         return tasks;
     }
 
-    public void insertAll(Task... tasks) {
-        new InsertAsyncTask(taskDao).execute(tasks);
-
+    public Observable<List<Long>> insertAll(Task... tasks) {
+        //new InsertAsyncTask(taskDao).execute(tasks);
+        return Observable.fromCallable(() -> taskDao.insertAll(tasks));
     }
 
     public void delete(Task... tasks){

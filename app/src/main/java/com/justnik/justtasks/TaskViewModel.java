@@ -12,12 +12,17 @@ import com.justnik.justtasks.taskdb.Task;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
+
 public class TaskViewModel extends AndroidViewModel {
 
     private TaskRepository taskRepository;
     private LiveData<List<Task>> taskList;
     private MutableLiveData<Integer> selectedCount;
+    private boolean isEnable;
+    private boolean isSelectedAll;
     private ArrayList<Integer> selectedItemsPosition;
+
 
 
     public MutableLiveData<Integer> getSelectedCount() {
@@ -37,12 +42,28 @@ public class TaskViewModel extends AndroidViewModel {
         selectedItemsPosition = new ArrayList<Integer>();
     }
 
+    public boolean isEnable() {
+        return isEnable;
+    }
+
+    public void setEnable(boolean enable) {
+        isEnable = enable;
+    }
+
+    public boolean isSelectedAll() {
+        return isSelectedAll;
+    }
+
+    public void setSelectedAll(boolean selectedAll) {
+        isSelectedAll = selectedAll;
+    }
+
     public LiveData<List<Task>> getTaskList() {
         return taskList;
     }
 
-    public void insertAll(Task tasks){
-        taskRepository.insertAll(tasks);
+    public Observable<List<Long>> insertAll(Task tasks){
+        return taskRepository.insertAll(tasks);
     }
 
     public LiveData<Task> getTaskByID(int id){
