@@ -53,6 +53,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.938"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/baseline_done_black_48" />
+        app:srcCompat="@drawable/ic_done_black_24dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

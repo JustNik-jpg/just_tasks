@@ -32,12 +32,13 @@ public class TaskAddActivity extends AppCompatActivity implements View.OnClickLi
     private EditText etTaskBody;
     private Calendar calendar;
 
-    private final String TAG_ADD = "Notification";
+    private final String TAG_ADD = "JustAdd";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.task_add_activity);
         etTaskTitle = findViewById(R.id.etTaskAddTitle);
         etTaskBody = findViewById(R.id.etTaskAddBody);
@@ -63,20 +64,15 @@ public class TaskAddActivity extends AppCompatActivity implements View.OnClickLi
             }
             Observable<List<Long>> o = viewModel.insertAll(task);
             o.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(longs -> {
-                if (calendar!=null){
-                    Log.d(TAG_ADD, "Added task"+longs.get(0)+"------"+task.toString());
+                if (calendar != null) {
+                    Log.d(TAG_ADD, "Added task" + longs.get(0) + "------" + task.toString());
                     NotificationScheduler notificationScheduler = new NotificationScheduler();
-                    notificationScheduler.scheduleNotification(getApplicationContext(),calendar.getTimeInMillis(),task.getTaskName(), Math.toIntExact(longs.get(0)));
+                    notificationScheduler.scheduleNotification(getApplicationContext(), calendar.getTimeInMillis(), task.getTaskName(), Math.toIntExact(longs.get(0)));
                 }
             });
 
-
         }
 
-
-
-
-        finish();
 
     }
 
@@ -92,10 +88,12 @@ public class TaskAddActivity extends AppCompatActivity implements View.OnClickLi
         if (item.getItemId() == R.id.miAddNotification) {
             DateTimePicker picker = new DateTimePicker(c -> calendar = c);
             picker.showDialog(this, System.currentTimeMillis());
+        } else if (item.getItemId() == android.R.id.home) {
+            finish();
         }
-
         return true;
 
     }
+
 
 }

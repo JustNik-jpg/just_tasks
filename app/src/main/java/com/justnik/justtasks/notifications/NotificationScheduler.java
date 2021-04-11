@@ -22,7 +22,7 @@ import java.io.IOException;
 public class NotificationScheduler {
     Context context;
     private final String CHANNEL_ID = "just_task_channel";
-    private static final String NOTIF_TAG = "Notifications";
+    private static final String NOTIF_TAG = "JustNotifications";
 
     public void scheduleNotification(Context context, long timeMillis, String title, int id) {
         this.context = context;
@@ -35,18 +35,22 @@ public class NotificationScheduler {
         json.addProperty("Title", title);
         json.addProperty("ID", id);
         //Writing JSOn to a file
-        try {
-            File file = new File(context.getFilesDir() + "/notification_" + id+".json");
-            //PrintWriter bw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
-            Log.d(NOTIF_TAG, "Writing notification json to a file " + json.toString());
-            //bw.write(json.toString());
-            FileOutputStream fos = new FileOutputStream(file);
-            String text = json.toString();
-            fos.write(text.getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.d(NOTIF_TAG, "Something went wrong... Notification won't be rescheduled");
+        File file = new File(context.getFilesDir() + "/notification_" + id+".json");
+        if (!file.exists()){
+            try {
+
+                //PrintWriter bw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+                Log.d(NOTIF_TAG, "Writing notification json to a file " + json.toString());
+                //bw.write(json.toString());
+                FileOutputStream fos = new FileOutputStream(file);
+                String text = json.toString();
+                fos.write(text.getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.d(NOTIF_TAG, "Something went wrong... Notification won't be rescheduled");
+            }
         }
+
 
         Intent intent = new Intent(context, TaskNotificationPublisher.class);
         intent.putExtra("notification", createNotification(title));
