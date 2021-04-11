@@ -11,10 +11,8 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 import com.justnik.justtasks.R;
-import com.justnik.justtasks.view.TaskActivity;
 
 public class NotificationScheduler {
     Context context;

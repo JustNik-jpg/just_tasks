@@ -39,7 +39,7 @@ public class TaskViewModel extends AndroidViewModel {
         taskList = taskRepository.getTasks();
         selectedCount = new MutableLiveData<>();
         selectedCount.setValue(0);
-        selectedItemsPosition = new ArrayList<Integer>();
+        selectedItemsPosition = new ArrayList<>();
     }
 
     public boolean isEnable() {

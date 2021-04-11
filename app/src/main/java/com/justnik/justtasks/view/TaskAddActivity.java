@@ -89,13 +89,9 @@ public class TaskAddActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        switch (item.getItemId()) {
-
-            case R.id.miAddNotification:
-                DateTimePicker picker = new DateTimePicker(c -> calendar = c);
-                picker.showDialog(this, System.currentTimeMillis());
-                break;
-
+        if (item.getItemId() == R.id.miAddNotification) {
+            DateTimePicker picker = new DateTimePicker(c -> calendar = c);
+            picker.showDialog(this, System.currentTimeMillis());
         }
 
         return true;

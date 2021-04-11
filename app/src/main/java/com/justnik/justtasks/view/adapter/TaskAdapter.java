@@ -153,7 +153,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
             viewModel.setEnable(true);
-            viewModel.getSelectedCount().observe((LifecycleOwner) context, integer -> mode.setTitle(String.format(integer+" Selected")));
+            viewModel.getSelectedCount().observe((LifecycleOwner) context, integer -> mode.setTitle(integer+" Selected"));
 
             return true;
         }
