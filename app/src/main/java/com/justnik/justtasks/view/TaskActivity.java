@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.JsonObject;
 import com.justnik.justtasks.R;
 import com.justnik.justtasks.TaskViewModel;
 import com.justnik.justtasks.view.adapter.TaskAdapter;
@@ -23,7 +24,6 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.task_activity);
         viewModel = new ViewModelProvider.AndroidViewModelFactory(this.getApplication()).create(TaskViewModel.class);
-        //TaskDB.getDatabase(this).taskDAO().insertAll(new Task("Anal,sex","fisting"));
 
         RecyclerView rv = findViewById(R.id.rvTasks);
         final TaskAdapter taskAdapter = new TaskAdapter(this,viewModel);

@@ -12,19 +12,45 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
+import com.google.gson.JsonObject;
 import com.justnik.justtasks.R;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class NotificationScheduler {
     Context context;
     private final String CHANNEL_ID = "just_task_channel";
+    private static final String NOTIF_TAG = "Notifications";
 
-    public void scheduleNotification(Context context, long timeMillis,String title,int id) {
+    public void scheduleNotification(Context context, long timeMillis, String title, int id) {
         this.context = context;
-        Log.d("Notification", "Scheduling Notification "+title+" "+id);
+        Log.d(NOTIF_TAG, "Scheduling Notification " + title + " " + id);
         createNotificationChannel();
+
+        //Creating notification JSON to reschedule it after restart
+        JsonObject json = new JsonObject();
+        json.addProperty("Time",timeMillis);
+        json.addProperty("Title", title);
+        json.addProperty("ID", id);
+        //Writing JSOn to a file
+        try {
+            File file = new File(context.getFilesDir() + "/notification_" + id+".json");
+            //PrintWriter bw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+            Log.d(NOTIF_TAG, "Writing notification json to a file " + json.toString());
+            //bw.write(json.toString());
+            FileOutputStream fos = new FileOutputStream(file);
+            String text = json.toString();
+            fos.write(text.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(NOTIF_TAG, "Something went wrong... Notification won't be rescheduled");
+        }
+
         Intent intent = new Intent(context, TaskNotificationPublisher.class);
-        intent.putExtra("notification",createNotification(title));
-        intent.putExtra("ID",id);
+        intent.putExtra("notification", createNotification(title));
+        intent.putExtra("ID", id);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, intent, 0);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -32,12 +58,23 @@ public class NotificationScheduler {
 
     }
 
-    public void cancelNotification(Context context, String title, int id){
+    public void cancelNotification(Context context, int id) {
         this.context = context;
-        Log.d("Canceling Notification",id+"");
+        Log.d(NOTIF_TAG, "Canceling notification: " + id);
+
+        //Deleting notification JSON if it exists
+        String path = context.getFilesDir()+"/notification_" + id+".json";
+        File file = new File(path);
+        if (file.exists()) {
+            if (file.delete()) {
+                System.out.println("file Deleted :" + path);
+            } else {
+                System.out.println("file not Deleted :" + path);
+            }
+        }
+
+
         Intent intent = new Intent(context, TaskNotificationPublisher.class);
-        intent.putExtra("notification",createNotification(title));
-        intent.putExtra("ID",id);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, intent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);

@@ -171,7 +171,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                         if(t.getNotificationDate()!=null){
                             Log.d("Notifications","Deleting task"+t.toString());
                             NotificationScheduler notificationScheduler = new NotificationScheduler();
-                            notificationScheduler.cancelNotification(context.getApplicationContext(),t.getTaskName(),t.getTaskId());
+                            notificationScheduler.cancelNotification(context.getApplicationContext(),t.getTaskId());
 
 
                         }
