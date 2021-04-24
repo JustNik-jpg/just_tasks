@@ -7,7 +7,6 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.util.Calendar;
-import java.util.Date;
 
 @Entity
 public class Task {
@@ -89,7 +88,7 @@ public class Task {
     public boolean equals(@Nullable Object obj) {
         if (obj instanceof Task) {
             Task temp = (Task) obj;
-            return this.taskId == temp.taskId;
+            return (this.taskId == temp.taskId)&&(this.taskName==temp.taskName)&&(this.taskText==temp.taskText);
         }
         return false;
     }

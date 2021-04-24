@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.justnik.justtasks">
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,35 +11,29 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.JustTasks">
+        <activity android:name=".view.ContainerActivity"><intent-filter>
+            <action android:name="android.intent.action.MAIN" />
 
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter></activity>
         <!-- Activities -->
-
         <activity android:name=".view.TaskActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
+        </activity>
         <activity android:name=".view.TaskAddActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".view.TaskActivity" />
         </activity>
-
         <activity android:name=".view.TaskDetailActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".view.TaskActivity" />
         </activity>
-
-        <activity android:name=".view.TaskEditActivity" />
-
-        <!-- Receivers -->
+        <activity android:name=".view.TaskEditActivity" /> <!-- Receivers -->
         <receiver
             android:name=".notifications.TaskNotificationPublisher"
             android:enabled="true" />
-
         <receiver
             android:name=".notifications.BootNotificationScheduler"
             android:enabled="true">
@@ -45,8 +41,6 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
-
     </application>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
 </manifest>

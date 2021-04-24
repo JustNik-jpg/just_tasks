@@ -1,15 +1,20 @@
-package com.justnik.justtasks.view;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
+package com.justnik.justtasks.view.fragments;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -26,7 +31,8 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class TaskAddActivity extends AppCompatActivity implements View.OnClickListener {
+
+public class TaskAddFragment extends Fragment implements View.OnClickListener {
 
     private EditText etTaskTitle;
     private EditText etTaskBody;
@@ -34,18 +40,18 @@ public class TaskAddActivity extends AppCompatActivity implements View.OnClickLi
 
     private final String TAG_ADD = "JustAdd";
 
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.task_add_activity);
-
-        etTaskTitle = findViewById(R.id.etTaskAddTitle);
-        etTaskBody = findViewById(R.id.etTaskAddBody);
-        FloatingActionButton btTaskAdd = findViewById(R.id.btConfirmTaskAdd);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_task_add, container, false);
+        etTaskTitle = view.findViewById(R.id.etTaskAddTitle);
+        etTaskBody = view.findViewById(R.id.etTaskAddBody);
+        FloatingActionButton btTaskAdd = view.findViewById(R.id.btConfirmTaskAdd);
         btTaskAdd.setOnClickListener(this);
+        return view;
     }
-
 
     @SuppressLint("CheckResult")
     @Override
@@ -55,7 +61,7 @@ public class TaskAddActivity extends AppCompatActivity implements View.OnClickLi
         task.setTaskName(etTaskTitle.getText().toString());
         task.setTaskText(etTaskBody.getText().toString());
         if (!task.getTaskName().isEmpty() || !task.getTaskText().isEmpty()) {
-            TaskViewModel viewModel = new ViewModelProvider.AndroidViewModelFactory(this.getApplication()).create(TaskViewModel.class);
+            TaskViewModel viewModel = new ViewModelProvider.AndroidViewModelFactory(getActivity().getApplication()).create(TaskViewModel.class);
 
             if (calendar != null) {
                 task.setNotificationDate(calendar);
@@ -67,20 +73,20 @@ public class TaskAddActivity extends AppCompatActivity implements View.OnClickLi
                 if (calendar != null) {
                     Log.d(TAG_ADD, "Added task" + longs.get(0) + "------" + task.toString());
                     NotificationScheduler notificationScheduler = new NotificationScheduler();
-                    notificationScheduler.scheduleNotification(getApplicationContext(), calendar.getTimeInMillis(), task.getTaskName(), Math.toIntExact(longs.get(0)));
+                    notificationScheduler.scheduleNotification(getActivity().getApplicationContext(), calendar.getTimeInMillis(), task.getTaskName(), Math.toIntExact(longs.get(0)));
                 }
             });
 
         }
 
-        finish();
+        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
 
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.add_task_menu, menu);
-        return true;
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.add_task_menu,menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -88,13 +94,11 @@ public class TaskAddActivity extends AppCompatActivity implements View.OnClickLi
 
         if (item.getItemId() == R.id.miAddNotification) {
             DateTimePicker picker = new DateTimePicker(c -> calendar = c);
-            picker.showDialog(this, System.currentTimeMillis());
+            picker.showDialog(getContext(), System.currentTimeMillis());
         } else if (item.getItemId() == android.R.id.home) {
-            finish();
+            Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();
         }
         return true;
 
     }
-
-
 }

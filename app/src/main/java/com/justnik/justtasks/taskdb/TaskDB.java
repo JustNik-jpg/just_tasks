@@ -18,35 +18,6 @@ public abstract class TaskDB extends RoomDatabase {
 
     private static TaskDB INSTANCE;
 
-    private static RoomDatabase.Callback sRoomCallback = new RoomDatabase.Callback(){
-
-        @Override
-        public void onOpen(@NonNull SupportSQLiteDatabase db) {
-            super.onOpen(db);
-
-            new PopulateTask(INSTANCE.taskDAO()).execute();
-        }
-
-
-    };
-    private static class PopulateTask extends AsyncTask<Void,Void,Void>{
-
-        TaskDAO taskDAO;
-
-        PopulateTask(TaskDAO taskDAO){
-            this.taskDAO = taskDAO;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-
-            taskDAO.clearDB();
-            taskDAO.insertAll(new Task("Ass","fuck ass"),new Task("Suck","some dicks"));
-
-            return null;
-        }
-    }
-
     public static TaskDB getDatabase(final Context context) {
         if (INSTANCE == null) {
             synchronized (TaskDB.class) {

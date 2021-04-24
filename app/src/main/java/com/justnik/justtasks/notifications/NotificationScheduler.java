@@ -38,7 +38,6 @@ public class NotificationScheduler {
         File file = new File(context.getFilesDir() + "/notification_" + id+".json");
         if (!file.exists()){
             try {
-
                 //PrintWriter bw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
                 Log.d(NOTIF_TAG, "Writing notification json to a file " + json.toString());
                 //bw.write(json.toString());

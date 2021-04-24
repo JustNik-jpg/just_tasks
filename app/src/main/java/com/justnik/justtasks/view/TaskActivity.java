@@ -26,7 +26,9 @@ public class TaskActivity extends AppCompatActivity implements View.OnClickListe
         viewModel = new ViewModelProvider.AndroidViewModelFactory(this.getApplication()).create(TaskViewModel.class);
 
         RecyclerView rv = findViewById(R.id.rvTasks);
-        final TaskAdapter taskAdapter = new TaskAdapter(this,viewModel);
+        final TaskAdapter taskAdapter = new TaskAdapter(this,viewModel,id -> {
+            System.out.println("hi");
+        });
         rv.setAdapter(taskAdapter);
         rv.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 

@@ -1,6 +1,5 @@
 package com.justnik.justtasks.view.adapter;
 
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -15,8 +14,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.justnik.justtasks.R;
@@ -36,11 +35,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private List<Integer> selectedItemsPosition;
     private final TaskViewModel viewModel;
     private ActionMode.Callback selectionCallback;
+    private TaskClickListener taskClickListener;
 
     private final String TAG_VIEW = "VIEW";
     private final String TAG_SELECT = "SELECT";
 
-    public TaskAdapter(Context context, TaskViewModel viewModel) {
+    public TaskAdapter(Context context, TaskViewModel viewModel, TaskClickListener taskClickListener) {
+        this.taskClickListener=taskClickListener;
         this.context = context;
         this.viewModel = viewModel;
         taskInflater = LayoutInflater.from(context);
@@ -81,9 +82,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 if (viewModel.isEnable()) {
                     toggleSelection(holder);
                 } else {
-                    Intent i = new Intent(context, TaskDetailActivity.class);
-                    i.putExtra("Task_ID", taskList.get(position).getTaskId());
-                    context.startActivity(i);
+                    taskClickListener.onTaskClick(task.getTaskId());
                 }
 
 
