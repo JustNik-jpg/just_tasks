@@ -1,7 +1,6 @@
 package com.justnik.justtasks.view.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -15,14 +14,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.justnik.justtasks.R;
 import com.justnik.justtasks.TaskViewModel;
 import com.justnik.justtasks.notifications.NotificationScheduler;
 import com.justnik.justtasks.taskdb.Task;
-import com.justnik.justtasks.view.TaskDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,7 +105,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             //Selection handling
             if (selectedItemsPosition.contains(position)){
                 holder.ivChecked.setVisibility(View.VISIBLE);
-                holder.cardView.setBackgroundColor(context.getResources().getColor(R.color.main_purple_light));
+                holder.cardView.setBackgroundColor(context.getResources().getColor(R.color.main_purple_light,null));
             } else {
                 holder.ivChecked.setVisibility(View.GONE);
                 holder.cardView.setBackgroundColor(context.getResources().getColor(R.color.white, null));
@@ -188,9 +185,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                     } else {
                         viewModel.setSelectedAll(true);
                         for (int i = 0; i < taskList.size(); i++) {
-                            if (selectedItemsPosition.contains(i)){
-                                continue;
-                            } else {
+                            if (!selectedItemsPosition.contains(i)){
                                 selectedItemsPosition.add(i);
                                 notifyItemChanged(i);
                             }
