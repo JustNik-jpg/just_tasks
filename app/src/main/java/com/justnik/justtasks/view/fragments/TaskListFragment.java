@@ -1,7 +1,9 @@
 package com.justnik.justtasks.view.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -13,10 +15,25 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.justnik.justtasks.R;
-import com.justnik.justtasks.TaskViewModel;
+import com.justnik.justtasks.dagger.DaggerApplicationComponent;
+import com.justnik.justtasks.dagger.TaskApplication;
+import com.justnik.justtasks.view.viewmodel.TaskViewModel;
 import com.justnik.justtasks.view.adapter.TaskAdapter;
+import com.justnik.justtasks.view.viewmodel.TaskViewModelFactory;
+
+import javax.inject.Inject;
 
 public class TaskListFragment extends Fragment {
+
+    @Inject
+    TaskViewModelFactory factory;
+    TaskViewModel viewModel;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        ((TaskApplication)getActivity().getApplication()).getComponent().inject(this);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -24,11 +41,12 @@ public class TaskListFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_task_list, container, false);
-        TaskViewModel viewModel = new ViewModelProvider.AndroidViewModelFactory(getActivity().getApplication()).create(TaskViewModel.class);
+        viewModel = new ViewModelProvider(getViewModelStore(),factory).get(TaskViewModel.class);
         RecyclerView rv = view.findViewById(R.id.rvTasks);
         final TaskAdapter taskAdapter = new TaskAdapter(getContext(), viewModel, this::onTaskClick);
         rv.setAdapter(taskAdapter);
         rv.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+
 
         view.findViewById(R.id.btTaskAdd).setOnClickListener(this::onClick);
 

@@ -1,20 +1,24 @@
-package com.justnik.justtasks;
+package com.justnik.justtasks.view.viewmodel;
 
 import android.app.Application;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
+import com.justnik.justtasks.TaskRepository;
 import com.justnik.justtasks.taskdb.Task;
+import com.justnik.justtasks.taskdb.TaskDB;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.reactivex.Observable;
 
-public class TaskViewModel extends AndroidViewModel {
+public class TaskViewModel extends ViewModel {
 
     private TaskRepository taskRepository;
     private LiveData<List<Task>> taskList;
@@ -33,9 +37,9 @@ public class TaskViewModel extends AndroidViewModel {
         this.selectedCount.setValue(selectedCount);
     }
 
-    public TaskViewModel(@NonNull Application application) {
-        super(application);
-        taskRepository = new TaskRepository(application);
+    @Inject
+    public TaskViewModel(TaskRepository repository) {
+        this.taskRepository = repository;
         taskList = taskRepository.getTasks();
         selectedCount = new MutableLiveData<>();
         selectedCount.setValue(0);

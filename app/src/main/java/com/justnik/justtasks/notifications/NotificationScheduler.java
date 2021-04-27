@@ -15,10 +15,6 @@ import androidx.core.app.NotificationCompat;
 import com.google.gson.JsonObject;
 import com.justnik.justtasks.R;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 public class NotificationScheduler {
     Context context;
     private final String CHANNEL_ID = "just_task_channel";
@@ -26,34 +22,27 @@ public class NotificationScheduler {
 
     public void scheduleNotification(Context context, long timeMillis, String title, int id) {
         this.context = context;
-        Log.d(NOTIF_TAG, "Scheduling Notification " + title + " " + id);
+        Log.d(NOTIF_TAG, "Scheduling Notification. Title:" + title + " ID: " + id + " Time:" + timeMillis);
         createNotificationChannel();
-
+        NotificationJSONHelper helper = new NotificationJSONHelper();
         //Creating notification JSON to reschedule it after restart
-        JsonObject json = new JsonObject();
-        json.addProperty("Time",timeMillis);
-        json.addProperty("Title", title);
-        json.addProperty("ID", id);
-        //Writing JSOn to a file
-        File file = new File(context.getFilesDir() + "/notification_" + id+".json");
-        if (!file.exists()){
-            try {
-                //PrintWriter bw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
-                Log.d(NOTIF_TAG, "Writing notification json to a file " + json.toString());
-                //bw.write(json.toString());
-                FileOutputStream fos = new FileOutputStream(file);
-                String text = json.toString();
-                fos.write(text.getBytes());
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.d(NOTIF_TAG, "Something went wrong... Notification won't be rescheduled");
-            }
+
+        //Writing JSON to a file if it doesn't exists
+        if (!helper.checkForFile(context, id + "")) {
+            JsonObject json = new JsonObject();
+            json.addProperty("Time", timeMillis);
+            json.addProperty("Title", title);
+            json.addProperty("ID", id);
+            helper.writeNotifJSON(context, id, json);
         }
 
-
         Intent intent = new Intent(context, TaskNotificationPublisher.class);
-        intent.putExtra("notification", createNotification(title));
+        Log.d(NOTIF_TAG, "Creating intent: "+ intent);
+        Notification notification = createNotification(title);
+        Log.d(NOTIF_TAG, "Creating notification: "+ notification);
+        intent.putExtra("notification", notification);
         intent.putExtra("ID", id);
+        Log.d(NOTIF_TAG, "Finished intent: "+ intent);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, intent, 0);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -66,16 +55,8 @@ public class NotificationScheduler {
         Log.d(NOTIF_TAG, "Canceling notification: " + id);
 
         //Deleting notification JSON if it exists
-        String path = context.getFilesDir()+"/notification_" + id+".json";
-        File file = new File(path);
-        if (file.exists()) {
-            if (file.delete()) {
-                System.out.println("file Deleted :" + path);
-            } else {
-                System.out.println("file not Deleted :" + path);
-            }
-        }
-
+        NotificationJSONHelper helper = new NotificationJSONHelper();
+        helper.deleteNotifJSON(context, id);
 
         Intent intent = new Intent(context, TaskNotificationPublisher.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, intent, 0);

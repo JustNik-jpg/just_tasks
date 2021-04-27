@@ -10,9 +10,6 @@ import androidx.core.app.NotificationManagerCompat;
 
 public class TaskNotificationPublisher extends BroadcastReceiver {
 
-
-
-
     @Override
     public void onReceive(Context context, Intent intent) {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
@@ -24,6 +21,8 @@ public class TaskNotificationPublisher extends BroadcastReceiver {
             Log.d("Notification", "Invalid id");
         } else {
             notificationManager.notify(1, notification);
+            NotificationJSONHelper helper = new NotificationJSONHelper();
+            helper.deleteNotifJSON(context,id);
         }
     }
 

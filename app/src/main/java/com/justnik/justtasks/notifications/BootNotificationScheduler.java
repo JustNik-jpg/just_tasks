@@ -20,6 +20,8 @@ public class BootNotificationScheduler extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(BOOT_TAG, "Received intent on BootNotificationScheduler");
+        NotificationJSONHelper helper = new NotificationJSONHelper();
+
         if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
             Log.d(BOOT_TAG, "Caught boot intent");
             String[] files = context.fileList();
@@ -27,18 +29,12 @@ public class BootNotificationScheduler extends BroadcastReceiver {
             for (String s : files) {
                 Log.d(BOOT_TAG, "Found file: " + s);
 
-
                 try {
-                    File file = new File(context.getFilesDir() + "/" + s);
-                    BufferedReader br = new BufferedReader(new FileReader(file));
-                    String jString = br.readLine();
-                    JsonObject jsonObject = new JsonParser().parse(jString).getAsJsonObject();
-                    Log.d(BOOT_TAG, "JSON: " + jsonObject);
-
+                    JsonObject jsonObject = helper.readNotifJSON(context,s);
                     long time = jsonObject.get("Time").getAsLong();
-                    String title = jsonObject.get("Time").getAsString();
+                    String title = jsonObject.get("Title").getAsString();
                     int id = jsonObject.get("ID").getAsInt();
-
+                    Log.d(BOOT_TAG, "Starting scheduling...Title:" + title + " ID: " + id+" Time:"+time);
                     scheduler.scheduleNotification(context, time, title, id);
                 } catch (FileNotFoundException e) {
                     Log.d(BOOT_TAG, "JSON file not found");

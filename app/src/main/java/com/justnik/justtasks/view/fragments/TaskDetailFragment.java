@@ -1,7 +1,9 @@
 package com.justnik.justtasks.view.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -11,11 +13,18 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.justnik.justtasks.R;
-import com.justnik.justtasks.TaskViewModel;
+import com.justnik.justtasks.dagger.TaskApplication;
+import com.justnik.justtasks.view.viewmodel.TaskViewModel;
+import com.justnik.justtasks.view.viewmodel.TaskViewModelFactory;
 
 import java.util.Calendar;
 
+import javax.inject.Inject;
+
 public class TaskDetailFragment extends Fragment {
+
+    @Inject
+    TaskViewModelFactory factory;
     private TaskViewModel viewModel;
 
     private TextView tvDetailedTaskTitle;
@@ -24,13 +33,19 @@ public class TaskDetailFragment extends Fragment {
     private TextView tvDetailedTaskNotifDate;
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        ((TaskApplication)getActivity().getApplication()).getComponent().inject(this);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_task_detail, container, false);
         int id = TaskDetailFragmentArgs.fromBundle(getArguments()).getTaskID();
 
-        viewModel = new ViewModelProvider.AndroidViewModelFactory(getActivity().getApplication()).create(TaskViewModel.class);
+        viewModel = new ViewModelProvider(getViewModelStore(),factory).get(TaskViewModel.class);
         tvDetailedTaskTitle = view.findViewById(R.id.tvDetailedTaskTitle);
         tvDetailedTaskBody = view.findViewById(R.id.tvDetailedTaskBody);
         tvDetailedComplete = view.findViewById(R.id.tvDetailedComplete);

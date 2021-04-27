@@ -29,11 +29,6 @@ public class Task {
 
     }
 
-    public Task(String title, String body) {
-        this.taskName = title;
-        this.taskText = body;
-    }
-
     public int getTaskId() {
         return taskId;
     }

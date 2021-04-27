@@ -33,7 +33,4 @@ public interface TaskDAO {
     @Query("DELETE FROM task")
     void clearDB();
 
-
-
-
 }

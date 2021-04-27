@@ -1,33 +1,30 @@
 package com.justnik.justtasks.taskdb;
 
 import android.content.Context;
-import android.os.AsyncTask;
-
-import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
-import androidx.sqlite.db.SupportSQLiteDatabase;
 
 @Database(entities = {Task.class}, version = 1)
 @TypeConverters({DateConverter.class})
 public abstract class TaskDB extends RoomDatabase {
 
-    public abstract TaskDAO taskDAO();
+    public abstract  TaskDAO taskDAO();
 
-    private static TaskDB INSTANCE;
+    private static volatile  TaskDB INSTANCE;
 
     public static TaskDB getDatabase(final Context context) {
-        if (INSTANCE == null) {
+        TaskDB localInstance = INSTANCE;
+        if (localInstance == null) {
             synchronized (TaskDB.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), TaskDB.class, "task_db").build();
+                if (localInstance == null) {
+                    INSTANCE = localInstance = Room.databaseBuilder(context.getApplicationContext(), TaskDB.class, "task_db").build();
                 }
             }
         }
 
-        return INSTANCE;
+        return localInstance;
     }
 
 

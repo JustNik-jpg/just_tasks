@@ -17,7 +17,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.justnik.justtasks.R;
-import com.justnik.justtasks.TaskViewModel;
+import com.justnik.justtasks.view.viewmodel.TaskViewModel;
 import com.justnik.justtasks.notifications.NotificationScheduler;
 import com.justnik.justtasks.taskdb.Task;
 
