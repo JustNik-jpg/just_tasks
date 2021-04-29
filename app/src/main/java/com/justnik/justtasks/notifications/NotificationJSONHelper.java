@@ -30,6 +30,7 @@ public class NotificationJSONHelper {
 
     public void writeNotifJSON(Context context, int id, JsonObject json){
         File file = new File(context.getFilesDir() + "/notification_" + id+".json");
+        Log.d(JSON_TAG, "Created file: "+file);
         if (!file.exists()){
             try {
                 //PrintWriter bw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
@@ -38,6 +39,7 @@ public class NotificationJSONHelper {
                 FileOutputStream fos = new FileOutputStream(file);
                 String text = json.toString();
                 fos.write(text.getBytes());
+                fos.close();
             } catch (IOException e) {
                 e.printStackTrace();
                 Log.d(JSON_TAG, "Something went wrong... Notification won't be written");

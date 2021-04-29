@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.justnik.justtasks.R;
@@ -44,6 +45,7 @@ public class TaskAddFragment extends Fragment implements View.OnClickListener {
 
     private EditText etTaskTitle;
     private EditText etTaskBody;
+    private TextView tvNotifDate;
     private Calendar calendar;
 
     @Inject
@@ -66,6 +68,7 @@ public class TaskAddFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_task_add, container, false);
         etTaskTitle = view.findViewById(R.id.etTaskAddTitle);
         etTaskBody = view.findViewById(R.id.etTaskAddBody);
+        tvNotifDate = view.findViewById(R.id.tvNotifDate);
         FloatingActionButton btTaskAdd = view.findViewById(R.id.btConfirmTaskAdd);
         btTaskAdd.setOnClickListener(this);
         return view;
@@ -84,6 +87,7 @@ public class TaskAddFragment extends Fragment implements View.OnClickListener {
             if (calendar != null) {
                 task.setNotificationDate(calendar);
                 Log.d(TAG_ADD, "Time of notification: "+calendar.getTimeInMillis());
+
             }
             Observable<List<Long>> o = viewModel.insertAll(task);
             o.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(longs -> {
@@ -110,7 +114,16 @@ public class TaskAddFragment extends Fragment implements View.OnClickListener {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         if (item.getItemId() == R.id.miAddNotification) {
-            DateTimePicker picker = new DateTimePicker(c -> calendar = c);
+            DateTimePicker picker = new DateTimePicker(c -> {
+                calendar = c;
+                tvNotifDate.setVisibility(View.VISIBLE);
+                tvNotifDate.setText(String.format("%s/%s/%s %s:%s",
+                        calendar.get(Calendar.DAY_OF_MONTH),
+                        calendar.get(Calendar.MONTH) + 1,
+                        calendar.get(Calendar.YEAR),
+                        calendar.get(Calendar.HOUR_OF_DAY),
+                        calendar.get(Calendar.MINUTE)));
+            });
             picker.showDialog(getContext(), System.currentTimeMillis());
         } else if (item.getItemId() == android.R.id.home) {
             Navigation.findNavController(getActivity(), R.id.nav_host_fragment).popBackStack();

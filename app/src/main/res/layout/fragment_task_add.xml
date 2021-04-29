@@ -9,12 +9,17 @@
         android:id="@+id/etTaskAddTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="48dp"
+        android:layout_marginEnd="20dp"
         android:ems="10"
-        android:inputType="textPersonName"
+
         android:textSize="24sp"
+        app:autoSizeTextType="uniform"
+        app:layout_constrainedWidth="true"
+
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.12"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -22,23 +27,32 @@
         android:id="@+id/tvNotifDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:text="01/01/1990"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.045"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etTaskAddTitle" />
 
     <EditText
         android:id="@+id/etTaskAddBody"
-        android:layout_width="374dp"
-        android:layout_height="409dp"
+        android:layout_width="0dp"
+        android:layout_height="401dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+
         android:ems="10"
+
         android:gravity="start|top"
         android:inputType="textMultiLine"
+
+        app:layout_constrainedWidth="true"
+
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.405"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvNotifDate" />
 
